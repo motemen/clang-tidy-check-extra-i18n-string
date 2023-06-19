@@ -18,5 +18,6 @@ jobs:
           cmake --build build
       - name: Test
         run: |
+          mkdir -p build/bin
           ln -s "$(which FileCheck-14)" build/bin/FileCheck
           PATH=$PWD/build/bin:$PATH ctest --test-dir build -V
