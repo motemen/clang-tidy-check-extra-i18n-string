@@ -11,3 +11,11 @@ target_link_libraries(ExtraI18nStringCheck PRIVATE
     clangTidy
     clangTidyUtils
 )
+
+enable_testing()
+
+add_test(
+    NAME main
+    COMMAND python test/check_clang_tidy.py test/i18n-string.cpp extra-i18n-string tmp -- --load=./build/libExtraI18nStringCheck.so
+    WORKING_DIRECTORY ..
+)
