@@ -1,9 +1,15 @@
 #include "clang-tidy/ClangTidyCheck.h"
 
+#if LLVM_VERSION_MAJOR >= 15
+#define STRING StringRef
+#else
+#define STRING std::string
+#endif
+
 namespace clang::tidy::extra {
 
 class I18nStringCheck : public ClangTidyCheck {
-  const std::vector<StringRef> AllowedFunctionsList;
+  const std::vector<STRING> AllowedFunctionsList;
 
 public:
   I18nStringCheck(StringRef Name, ClangTidyContext *Context);
