@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 project(ExtraI18nStringCheck VERSION 0.1.0)
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 find_package(Clang REQUIRED CONFIG)
 
 add_library(ExtraI18nStringCheck MODULE I18nStringCheck.cpp)
