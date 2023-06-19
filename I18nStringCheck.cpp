@@ -59,8 +59,11 @@ void I18nStringCheck::check(const MatchFinder::MatchResult &Result) {
     }
   }
 
-  if (Result.SourceManager->isMacroArgExpansion(SL->getBeginLoc()) ||
-      Result.SourceManager->isMacroBodyExpansion(SL->getBeginLoc())) {
+  if (Result.SourceManager->isMacroBodyExpansion(SL->getBeginLoc())) {
+    return;
+  }
+
+  if (Result.SourceManager->isMacroArgExpansion(SL->getBeginLoc())) {
     auto ExpandedMacroName =
         Lexer::getImmediateMacroName(SL->getBeginLoc(), *Result.SourceManager,
                                      Result.Context->getLangOpts());
