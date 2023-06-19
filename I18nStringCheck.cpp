@@ -13,6 +13,7 @@
 #include "clang/AST/ASTContext.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
+#include "clang/Lex/Lexer.h"
 
 using namespace clang::ast_matchers;
 
@@ -60,8 +61,15 @@ void I18nStringCheck::check(const MatchFinder::MatchResult &Result) {
 
   if (Result.SourceManager->isMacroArgExpansion(SL->getBeginLoc()) ||
       Result.SourceManager->isMacroBodyExpansion(SL->getBeginLoc())) {
-    diag(SL->getBeginLoc(), "string literal is i18n-ed", DiagnosticIDs::Remark);
-    return;
+    auto ExpandedMacroName =
+        Lexer::getImmediateMacroName(SL->getBeginLoc(), *Result.SourceManager,
+                                     Result.Context->getLangOpts());
+    if (std::find(AllowedFunctionsList.begin(), AllowedFunctionsList.end(),
+                  ExpandedMacroName) != AllowedFunctionsList.end()) {
+      diag(SL->getBeginLoc(), "string literal is i18n-ed",
+           DiagnosticIDs::Remark);
+      return;
+    }
   }
 
   diag(SL->getBeginLoc(), "string literal is not i18n-ed");
