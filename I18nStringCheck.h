@@ -10,6 +10,7 @@ namespace clang::tidy::extra {
 
 class I18nStringCheck : public ClangTidyCheck {
   const std::vector<STRING> AllowedFunctionsList;
+  const bool RemarkPassed;
 
 public:
   I18nStringCheck(StringRef Name, ClangTidyContext *Context);

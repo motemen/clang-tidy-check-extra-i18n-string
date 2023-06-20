@@ -28,6 +28,7 @@ public:
 
 I18nStringCheck::I18nStringCheck(StringRef Name, ClangTidyContext *Context)
     : ClangTidyCheck(Name, Context),
+      RemarkPassed(Options.get("RemarkPassed", false)),
       AllowedFunctionsList(utils::options::parseStringList(
           Options.get("AllowedFunctions", "_;"
                                           "N_;"
@@ -43,6 +44,7 @@ void I18nStringCheck::registerMatchers(MatchFinder *Finder) {
 }
 
 void I18nStringCheck::storeOptions(ClangTidyOptions::OptionMap &Opts) {
+  Options.store(Opts, "RemarkPassed", RemarkPassed);
   Options.store(Opts, "AllowedFunctions",
                 utils::options::serializeStringList(AllowedFunctionsList));
 }
@@ -53,8 +55,10 @@ void I18nStringCheck::check(const MatchFinder::MatchResult &Result) {
   if (const auto *F = Result.Nodes.getNodeAs<FunctionDecl>("function")) {
     if (std::find(AllowedFunctionsList.begin(), AllowedFunctionsList.end(),
                   F->getName()) != AllowedFunctionsList.end()) {
-      diag(SL->getBeginLoc(), "string literal is i18n-ed",
-           DiagnosticIDs::Remark);
+      if (RemarkPassed) {
+        diag(SL->getBeginLoc(), "this string literal passed",
+             DiagnosticIDs::Remark);
+      }
       return;
     }
   }
@@ -69,8 +73,10 @@ void I18nStringCheck::check(const MatchFinder::MatchResult &Result) {
                                      Result.Context->getLangOpts());
     if (std::find(AllowedFunctionsList.begin(), AllowedFunctionsList.end(),
                   ExpandedMacroName) != AllowedFunctionsList.end()) {
-      diag(SL->getBeginLoc(), "string literal is i18n-ed",
-           DiagnosticIDs::Remark);
+      if (RemarkPassed) {
+        diag(SL->getBeginLoc(), "this string literal passed",
+             DiagnosticIDs::Remark);
+      }
       return;
     }
   }

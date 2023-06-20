@@ -11,8 +11,12 @@ void func() {
   // CHECK-MESSAGES: :[[@LINE-1]]:3: warning: string literal is not i18n-ed
   // [extra-i18n-string]
   _("non-raw");
+  // CHECK-MESSAGES: :[[@LINE-1]]:5: remark: this string literal passed
+  // [extra-i18n-string]
   printf("raw");
   // CHECK-MESSAGES: :[[@LINE-1]]:10: warning: string literal is not i18n-ed
   // [extra-i18n-string]
   gettext("non-raw");
+  // CHECK-MESSAGES: :[[@LINE-1]]:5: remark: this string literal passed
+  // [extra-i18n-string]
 }
