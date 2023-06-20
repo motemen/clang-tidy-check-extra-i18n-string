@@ -8,6 +8,8 @@ find_package(Clang REQUIRED CONFIG)
 
 add_library(ExtraI18nStringCheck MODULE I18nStringCheck.cpp)
 
+set_target_properties(ExtraI18nStringCheck PROPERTIES OUTPUT_NAME ExtraI18nStringCheck_${LLVM_VERSION})
+
 target_include_directories(ExtraI18nStringCheck PRIVATE ${CLANG_INCLUDE_DIRS})
 
 target_link_libraries(ExtraI18nStringCheck PRIVATE

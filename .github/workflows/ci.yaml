@@ -3,6 +3,9 @@ name: CI
 on:
   push:
 
+permissions:
+  contents: write
+
 jobs:
   build_test:
     runs-on: ubuntu-latest
@@ -21,3 +24,9 @@ jobs:
           mkdir -p build/bin
           ln -s "$(which FileCheck-14)" build/bin/FileCheck
           PATH=$PWD/build/bin:$PATH ctest --test-dir build -V
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            build/*.so
