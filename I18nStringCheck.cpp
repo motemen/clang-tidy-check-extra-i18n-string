@@ -1,11 +1,3 @@
-//===--- I18nStringCheck.cpp - clang-tidy ---------------------------------===//
-//
-// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
-// See https://llvm.org/LICENSE.txt for license information.
-// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-//
-//===----------------------------------------------------------------------===//
-
 #include "I18nStringCheck.h"
 #include "clang-tidy/ClangTidyModule.h"
 #include "clang-tidy/ClangTidyModuleRegistry.h"
@@ -38,12 +30,15 @@ I18nStringCheck::parseAllowedFunctions(const STRING &AllowedFunctions) {
 
     STRING FuncName;
     STRING ArgPositionStr;
-    if (std::tie(FuncName, ArgPositionStr) = AllowedFunction.split(":");
+
+    if (std::tie(FuncName, ArgPositionStr) =
+            StringRef(AllowedFunction).split(":");
         !ArgPositionStr.empty()) {
       AllowedFunctionEntry.Name = FuncName;
 
       STRING ArgPosition;
-      while (std::tie(ArgPosition, ArgPositionStr) = ArgPositionStr.split(","),
+      while (std::tie(ArgPosition, ArgPositionStr) =
+                 StringRef(ArgPositionStr).split(","),
              !ArgPosition.empty()) {
 
         AllowedFunctionEntry.ArgPositions.push_back(
@@ -108,7 +103,7 @@ bool I18nStringCheck::isAllowedFunctionCall(const CallExpr *CE,
   return false;
 }
 
-bool I18nStringCheck::isAllowedMacroExpansion(const STRING MacroName) const {
+bool I18nStringCheck::isAllowedMacroExpansion(const StringRef MacroName) const {
   for (const auto &AllowedFunction : AllowedFunctionsList) {
     if (MacroName == AllowedFunction.Name) {
       return true;

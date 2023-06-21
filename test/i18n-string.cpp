@@ -1,5 +1,6 @@
 // RUN: %check_clang_tidy %s misc-i18n-string %t --
-// --load=./build/libExtraI18nStringCheck.so
+// -load=./build/libExtraI18nStringCheck.so
+// -config={"CheckOptions":{"extra-i18n-string.RemarkPassed":true,"extra-i18n-string.AllowedFunctions":"_;gettext;prompt:1"}}
 
 #define _(s) gettext((s))
 

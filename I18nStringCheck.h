@@ -22,7 +22,7 @@ class I18nStringCheck : public ClangTidyCheck {
   static std::string serializeAllowedFunctions(
       const std::vector<AllowedFunctionEntry> &AllowedFunctions);
   bool isAllowedFunctionCall(const CallExpr *CE, const StringLiteral *S) const;
-  bool isAllowedMacroExpansion(const STRING MacroName) const;
+  bool isAllowedMacroExpansion(const StringRef MacroName) const;
 
 public:
   I18nStringCheck(StringRef Name, ClangTidyContext *Context);

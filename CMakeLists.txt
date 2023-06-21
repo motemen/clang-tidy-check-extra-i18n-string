@@ -19,10 +19,17 @@ target_link_libraries(ExtraI18nStringCheck PRIVATE
 
 enable_testing()
 
+if(${LLVM_VERSION} EQUAL 14)
+    set(TEST_CONFIG_OPTION "-config={\"CheckOptions\":[{\"key\":\"extra-i18n-string.RemarkPassed\",\"value\":true},{\"key\":\"extra-i18n-string.AllowedFunctions\",\"value\":\"_\;gettext\;prompt:1\"}]}")
+else()
+    set(TEST_CONFIG_OPTION "-config={\"CheckOptions\":{\"extra-i18n-string.RemarkPassed\":true,\"extra-i18n-string.AllowedFunctions\":\"_\;gettext\;prompt:1\"}}")
+endif()
+
+
 add_test(
     NAME main
-    COMMAND python test/check_clang_tidy.py test/i18n-string.cpp extra-i18n-string tmp --
-        -load=./build/libExtraI18nStringCheck_${LLVM_VERSION}.so
-        -config={"CheckOptions":{"extra-i18n-string.RemarkPassed":true,"extra-i18n-string.AllowedFunctions":"_\;gettext\;prompt:1"}}
+    COMMAND python ${CMAKE_SOURCE_DIR}/test/check_clang_tidy.py ${CMAKE_SOURCE_DIR}/test/i18n-string.cpp extra-i18n-string tmp --
+        -load=${CMAKE_BINARY_DIR}/libExtraI18nStringCheck_${LLVM_VERSION}.so
+        ${TEST_CONFIG_OPTION}
     WORKING_DIRECTORY ..
 )
