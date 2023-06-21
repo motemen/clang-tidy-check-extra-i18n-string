@@ -5,6 +5,7 @@
 
 void gettext(const char *s);
 void printf(const char *fmt);
+void prompt(const char *category, const char *msg);
 
 void func() {
   "raw";
@@ -17,6 +18,10 @@ void func() {
   // CHECK-MESSAGES: :[[@LINE-1]]:10: warning: string literal is not i18n-ed
   // [extra-i18n-string]
   gettext("non-raw");
-  // CHECK-MESSAGES: :[[@LINE-1]]:5: remark: this string literal passed
+  // CHECK-MESSAGES: :[[@LINE-1]]:11: remark: this string literal passed
+  // [extra-i18n-string]
+  "raw"; // NOLINT
+  prompt("category", "non-raw");
+  // CHECK-MESSAGES: :[[@LINE-1]]:22: warning: string literal is not i18n-ed
   // [extra-i18n-string]
 }

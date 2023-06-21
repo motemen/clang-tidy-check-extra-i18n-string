@@ -8,9 +8,21 @@
 
 namespace clang::tidy::extra {
 
+struct AllowedFunctionEntry {
+  STRING Name;
+  std::vector<uint> ArgPositions;
+};
+
 class I18nStringCheck : public ClangTidyCheck {
-  const std::vector<STRING> AllowedFunctionsList;
+  const std::vector<AllowedFunctionEntry> AllowedFunctionsList;
   const bool RemarkPassed;
+
+  static std::vector<AllowedFunctionEntry>
+  parseAllowedFunctions(const STRING &AllowedFunctions);
+  static std::string serializeAllowedFunctions(
+      const std::vector<AllowedFunctionEntry> &AllowedFunctions);
+  bool isAllowedFunctionCall(const CallExpr *CE, const StringLiteral *S) const;
+  bool isAllowedMacroExpansion(const STRING MacroName) const;
 
 public:
   I18nStringCheck(StringRef Name, ClangTidyContext *Context);

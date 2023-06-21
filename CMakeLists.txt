@@ -21,6 +21,8 @@ enable_testing()
 
 add_test(
     NAME main
-    COMMAND python test/check_clang_tidy.py test/i18n-string.cpp extra-i18n-string tmp -- --load=./build/libExtraI18nStringCheck_${LLVM_VERSION}.so -config={"CheckOptions":{"extra-i18n-string.RemarkPassed":true}}
+    COMMAND python test/check_clang_tidy.py test/i18n-string.cpp extra-i18n-string tmp --
+        -load=./build/libExtraI18nStringCheck_${LLVM_VERSION}.so
+        -config={"CheckOptions":{"extra-i18n-string.RemarkPassed":true,"extra-i18n-string.AllowedFunctions":"_\;gettext\;prompt:1"}}
     WORKING_DIRECTORY ..
 )
