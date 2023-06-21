@@ -17,7 +17,8 @@ jobs:
           if dpkg --status "clang-${{matrix.llvm_version}}"; then
             sudo apt-get install -y libclang-${{ matrix.llvm_version }}-dev
           else
-            curl https://apt.llvm.org/llvm.sh | sudo bash /dev/stdin ${{ matrix.llvm_version }} all
+            curl https://apt.llvm.org/llvm.sh | sudo bash /dev/stdin ${{ matrix.llvm_version }}
+            sudo apt-get install -y libclang-${{ matrix.llvm_version }}-dev clang-tidy-${{ matrix.llvm_version }}
           fi
       - uses: actions/checkout@v2
       - name: Configure
