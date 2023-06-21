@@ -8,21 +8,24 @@ permissions:
 
 jobs:
   build_test:
+    strategy:
+      matrix:
+        llvm_version: [14, 15, 16]
     runs-on: ubuntu-latest
     steps:
       - run: |
-          sudo apt-get update && sudo apt-get install -y "libclang-14-dev"
+          curl https://apt.llvm.org/llvm.sh | bash /dev/stdin ${{ matrix.llvm_version }} all
       - uses: actions/checkout@v2
       - name: Configure
         run: |
-          CC=clang-14 CXX=clang++-14 cmake -S . -B build -DCMAKE_PREFIX_PATH=/usr/lib/llvm-14
+          CC=clang-${{ matrix.llvm_version }} CXX=clang++-${{ matrix.llvm_version }} cmake -S . -B build -DCMAKE_PREFIX_PATH=/usr/lib/llvm-${{ matrix.llvm_version }}
       - name: Build
         run: |
           cmake --build build
       - name: Test
         run: |
           mkdir -p build/bin
-          ln -s "$(which FileCheck-14)" build/bin/FileCheck
+          ln -s "$(which FileCheck-${{ matrix.llvm_version }})" build/bin/FileCheck
           PATH=$PWD/build/bin:$PATH ctest --test-dir build -V
       - name: Release
         uses: softprops/action-gh-release@v1
