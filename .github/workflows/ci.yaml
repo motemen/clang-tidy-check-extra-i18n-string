@@ -20,6 +20,7 @@ jobs:
             curl https://apt.llvm.org/llvm.sh | sudo bash /dev/stdin ${{ matrix.llvm_version }}
             sudo apt-get install -y libclang-${{ matrix.llvm_version }}-dev clang-tidy-${{ matrix.llvm_version }}
           fi
+          sudo update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-${{ matrix.llvm_version }} 999
       - uses: actions/checkout@v2
       - name: Configure
         run: |
@@ -29,6 +30,7 @@ jobs:
           cmake --build build
       - name: Test
         run: |
+          clang-tidy --version
           mkdir -p build/bin
           ln -s "$(which FileCheck-${{ matrix.llvm_version }})" build/bin/FileCheck
           PATH=$PWD/build/bin:$PATH ctest --test-dir build -V
