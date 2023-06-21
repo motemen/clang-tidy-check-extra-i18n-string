@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          curl https://apt.llvm.org/llvm.sh | bash /dev/stdin ${{ matrix.llvm_version }} all
+          curl https://apt.llvm.org/llvm.sh | sudo bash /dev/stdin ${{ matrix.llvm_version }} all
       - uses: actions/checkout@v2
       - name: Configure
         run: |
