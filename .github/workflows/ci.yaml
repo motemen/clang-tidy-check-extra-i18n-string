@@ -14,7 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          curl https://apt.llvm.org/llvm.sh | sudo bash /dev/stdin ${{ matrix.llvm_version }} all
+          if dpkg --status "clang-${{matrix.llvm_version}}"; then
+            sudo apt-get install -y libclang-${{ matrix.llvm_version }}-dev
+          else
+            curl https://apt.llvm.org/llvm.sh | sudo bash /dev/stdin ${{ matrix.llvm_version }} all
+          fi
       - uses: actions/checkout@v2
       - name: Configure
         run: |
