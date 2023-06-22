@@ -19,12 +19,7 @@ target_link_libraries(ExtraI18nStringCheck PRIVATE
 
 enable_testing()
 
-if(${LLVM_VERSION_MAJOR} EQUAL 14)
-    set(TEST_CONFIG_OPTION "-config={\"CheckOptions\":[{\"key\":\"extra-i18n-string.RemarkPassed\",\"value\":true},{\"key\":\"extra-i18n-string.AllowedFunctions\",\"value\":\"_\;gettext\;prompt:1\"}]}")
-else()
-    set(TEST_CONFIG_OPTION "-config={\"CheckOptions\":{\"extra-i18n-string.RemarkPassed\":true,\"extra-i18n-string.AllowedFunctions\":\"_\;gettext\;prompt:1\"}}")
-endif()
-
+set(TEST_CONFIG_OPTION "-config={\"CheckOptions\":[{\"key\":\"extra-i18n-string.RemarkPassed\",\"value\":true},{\"key\":\"extra-i18n-string.AllowedFunctions\",\"value\":\"_\;gettext\;prompt:1\"},{\"key\":\"extra-i18n-string.SkipPattern\",\"value\":\"^$|^%s$\"}]}")
 
 add_test(
     NAME main

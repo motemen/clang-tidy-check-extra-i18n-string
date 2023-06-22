@@ -116,10 +116,13 @@ bool I18nStringCheck::isAllowedMacroExpansion(const StringRef MacroName) const {
 I18nStringCheck::I18nStringCheck(StringRef Name, ClangTidyContext *Context)
     : ClangTidyCheck(Name, Context),
       RemarkPassed(Options.get("RemarkPassed", false)),
+      SkipPatternStr(Options.get("SkipPattern", "^$")),
       AllowedFunctionsList(
           parseAllowedFunctions(Options.get("AllowedFunctions", "_;"
                                                                 "N_;"
-                                                                "gettext"))) {}
+                                                                "gettext"))) {
+  SkipPattern = llvm::Regex(SkipPatternStr);
+}
 
 void I18nStringCheck::registerMatchers(MatchFinder *Finder) {
   Finder->addMatcher(
@@ -134,12 +137,21 @@ void I18nStringCheck::registerMatchers(MatchFinder *Finder) {
 
 void I18nStringCheck::storeOptions(ClangTidyOptions::OptionMap &Opts) {
   Options.store(Opts, "RemarkPassed", RemarkPassed);
+  Options.store(Opts, "SkipPattern", SkipPatternStr);
   Options.store(Opts, "AllowedFunctions",
                 serializeAllowedFunctions(AllowedFunctionsList));
 }
 
 void I18nStringCheck::check(const MatchFinder::MatchResult &Result) {
   const auto *S = Result.Nodes.getNodeAs<StringLiteral>("stringLiteral");
+
+  if (SkipPattern.match(S->getString())) {
+    if (RemarkPassed) {
+      diag(S->getBeginLoc(), "this string literal passed",
+           DiagnosticIDs::Remark);
+    }
+    return;
+  }
 
   if (const auto *CE = Result.Nodes.getNodeAs<CallExpr>("callExpr")) {
     if (isAllowedFunctionCall(CE, S)) {

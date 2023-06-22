@@ -16,6 +16,8 @@ struct AllowedFunctionEntry {
 class I18nStringCheck : public ClangTidyCheck {
   const std::vector<AllowedFunctionEntry> AllowedFunctionsList;
   const bool RemarkPassed;
+  const std::string SkipPatternStr;
+  llvm::Regex SkipPattern;
 
   static std::vector<AllowedFunctionEntry>
   parseAllowedFunctions(const STRING &AllowedFunctions);
