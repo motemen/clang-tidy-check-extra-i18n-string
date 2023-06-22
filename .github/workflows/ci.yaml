@@ -8,12 +8,14 @@ permissions:
 
 jobs:
   build_test:
+    name: Build and Test
     strategy:
       matrix:
         llvm_version: [14, 15, 16]
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - name: Setup LLVM ${{ matrix.llvm_version }}
+        run: |
           if dpkg --status "clang-${{matrix.llvm_version}}"; then
             sudo apt-get install -y libclang-${{ matrix.llvm_version }}-dev
           else
@@ -34,9 +36,29 @@ jobs:
           mkdir -p build/bin
           ln -s "$(which FileCheck-${{ matrix.llvm_version }})" build/bin/FileCheck
           PATH=$PWD/build/bin:$PATH ctest --test-dir build -V
+      - uses: actions/upload-artifact@v3
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: build-${{ matrix.llvm_version }}}
+          path: build/*.so
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: build-14
+      - uses: actions/download-artifact@v3
+        with:
+          name: build-15
+      - uses: actions/download-artifact@v3
+        with:
+          name: build-16
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            build/*.so
+            *.so
